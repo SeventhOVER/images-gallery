@@ -30,7 +30,8 @@
   },
   "prettier":{
     "singleQuote": true,
-    "endOfLine": "auto"
+    "endOfLine": "auto",
+    "tabWidth": 4
   },
   "browserslist": {
     "production": [
