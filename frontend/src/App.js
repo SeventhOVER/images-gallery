@@ -33,6 +33,7 @@ const App = () => {
     };
 
     const handleDeleteImage = (id) => {
+        console.log(id);
         const filterCondition = (image) => {
             return image.id !== id;
         };
