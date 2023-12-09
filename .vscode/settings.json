@@ -8,5 +8,14 @@
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": "explicit"
     },
-    "python.defaultInterpreterPath": ".\\api\\.venv\\Scripts\\python.exe"
+    "python.defaultInterpreterPath": ".\\api\\.venv\\Scripts\\python.exe",
+    "pylint.args": [
+        "--disable=missing-class-docstring",
+        "--disable=missing-function-docstring",
+        "--disable=missing-module-docstring"
+    ],
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true
+    }
 }
