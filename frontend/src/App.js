@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Header from './components/Header';
 import Search from './components/Search';
@@ -12,31 +13,61 @@ const App = () => {
     const [word, setWord] = useState('');
     const [images, setImages] = useState([]);
 
-    useEffect(() => {
-        console.log(images);
-    }, [images]);
+    // useEffect(() => {
+    //     console.log(images);
+    // }, [images]);
 
-    const handleSearchSubmit = (e) => {
+    useEffect(() => {
+        const getSavedImages = async () => {
+            try {
+                const res = await axios.get(`${API_URL}/images`);
+                setImages(res.data || []);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        getSavedImages();
+    }, []);
+
+    const handleSearchSubmit = async (e) => {
         e.preventDefault();
-        console.log(word);
-        fetch(`${API_URL}/new-image?query=${word}`)
-            .then((res) => res.json())
-            .then((data) => {
-                setImages([{ ...data, title: word }, ...images]);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+
+        try {
+            const res = await axios.get(`${API_URL}/new-image?query=${word}`);
+            setImages([{ ...res.data, title: word }, ...images]);
+        } catch (error) {
+            console.log(error);
+        }
 
         setWord('');
     };
 
     const handleDeleteImage = (id) => {
-        console.log(id);
         const filterCondition = (image) => {
             return image.id !== id;
         };
         setImages(images.filter(filterCondition));
+    };
+
+    const handleSaveImage = async (id) => {
+        const saveCondition = (image) => {
+            return image.id === id;
+        };
+        const imageToBeSaved = images.find(saveCondition);
+        imageToBeSaved.saved = true;
+
+        try {
+            const res = await axios.post(`${API_URL}/images`, imageToBeSaved);
+            if (res.data?.inserted_id) {
+                setImages(
+                    images.map((image) =>
+                        image.id === id ? { ...image, saved: true } : image,
+                    ),
+                );
+            }
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     return (
@@ -56,6 +87,7 @@ const App = () => {
                                     <ImageCard
                                         image={image}
                                         deleteImage={handleDeleteImage}
+                                        saveImage={handleSaveImage}
                                     />
                                 </Col>
                             );
